@@ -25,6 +25,7 @@
         .profile-picture img {
             max-width: 150px;
             border-radius: 50%;
+            height: auto;
         }
     </style>
 </head>
@@ -32,9 +33,10 @@
     <h1>{{ resume.name }}</h1>
     <h2>{{ resume.job_title }}</h2>
 
-    {% if resume.photo %}
+    {% if resume.photo_path %}
     <div class="profile-picture">
-        <img src="{{ url_for('static', filename='uploads/' + resume.photo) }}" alt="Profile Picture">
+    <!-- For PDF, use absolute path -->
+        <img src="http://localhost:5000/{{ resume.photo_path }}" alt="Profile Picture" style="max-width: 150px; border-radius: 50%; height: auto;">
     </div>
     {% endif %}
 

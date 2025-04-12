@@ -36,7 +36,8 @@
 
     {% if resume.photo %}
     <div class="profile-picture">
-        <img src="{{ url_for('static', filename='uploads/' + resume.photo) }}" alt="Profile Picture">
+        <!-- Updated image source for WeasyPrint compatibility -->
+        <img src="file://{{ resume.photo_path|replace('\\', '/') }}" alt="Profile Picture">
     </div>
     {% endif %}
 
