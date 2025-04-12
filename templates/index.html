@@ -36,26 +36,36 @@
 
             <div class="section" id="contact-section">
                 <label for="contact">Contact Info:</label>
-                <input type="text" name="contact" value="{{ session['contact'][0] if session['contact'] else '' }}">
+                <input type="text" name="contact[]" value="{{ session['contact'][0] if session['contact'] else '' }}">
                 <button type="button" class="add-btn" onclick="addField('contact')">Add Contact</button>
             </div>
 
             <div class="section" id="experience-section">
                 <label for="experience">Experience:</label>
-                <input type="text" name="experience" value="{{ session['experience'][0] if session['experience'] else '' }}">
+                <input type="text" name="experience[]" value="{{ session['experience'][0] if session['experience'] else '' }}">
                 <button type="button" class="add-btn" onclick="addField('experience')">Add Experience</button>
             </div>
 
             <div class="section" id="activities-section">
                 <label for="activities">Activities:</label>
-                <input type="text" name="activities" value="{{ session['activities'][0] if session['activities'] else '' }}">
+                <input type="text" name="activities[]" value="{{ session['activities'][0] if session['activities'] else '' }}">
                 <button type="button" class="add-btn" onclick="addField('activities')">Add Activity</button>
             </div>
 
             <div class="section" id="hobbies-section">
                 <label for="hobbies">Hobbies:</label>
-                <input type="text" name="hobbies" value="{{ session['hobbies'][0] if session['hobbies'] else '' }}">
+                <input type="text" name="hobbies[]" value="{{ session['hobbies'][0] if session['hobbies'] else '' }}">
                 <button type="button" class="add-btn" onclick="addField('hobbies')">Add Hobby</button>
+            </div>
+
+            <div class="section">
+                <label for="education">Education:</label>
+                <input type="text" name="education" value="{{ session['education'] if session['education'] else '' }}" required>
+            </div>
+            
+            <div class="section">
+                <label for="skills">Skills (comma separated):</label>
+                <textarea name="skills" rows="2" required>{{ session['skills'] if session['skills'] else '' }}</textarea>
             </div>
 
             <div class="section">
@@ -70,12 +80,11 @@
     <script>
         function addField(section) {
             let sectionElement = document.getElementById(`${section}-section`);
-            let inputFields = sectionElement.querySelectorAll(`input[name='${section}']`);
             
             // Create new input field for the section
             let newField = document.createElement("input");
             newField.setAttribute("type", "text");
-            newField.setAttribute("name", section);
+            newField.setAttribute("name", section + "[]");  // Ensure it's treated as an array
             sectionElement.insertBefore(newField, sectionElement.querySelector(".add-btn"));
 
             // Create the delete button
@@ -89,7 +98,7 @@
 
         function deleteField(section, button) {
             let sectionElement = document.getElementById(`${section}-section`);
-            let inputFields = sectionElement.querySelectorAll(`input[name='${section}']`);
+            let inputFields = sectionElement.querySelectorAll(`input[name='${section}[]']`);
             
             if (inputFields.length > 1) {
                 // Remove the last input field

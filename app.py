@@ -36,61 +36,81 @@ def generate_resume():
         session['name'] = request.form['name']
         session['job_title'] = request.form['job_title']
         
-        # Get lists of dynamic fields and filter out empty strings
+        # Get all form fields with proper defaults
         session['experience'] = [exp for exp in request.form.getlist('experience[]') if exp.strip()]
-        session['education'] = request.form['education']
-        session['skills'] = request.form['skills']
-        session['profile'] = request.form['profile']
+        session['education'] = request.form.get('education', 'Not specified')
+        session['skills'] = request.form.get('skills', 'Not specified')
+        session['profile'] = request.form.get('profile', '')
         
         session['contact'] = [cont for cont in request.form.getlist('contact[]') if cont.strip()]
         session['activities'] = [activity for activity in request.form.getlist('activities[]') if activity.strip()]
         session['hobbies'] = [hobby for hobby in request.form.getlist('hobbies[]') if hobby.strip()]
 
+        # Debug print to check received data
+        print("Received form data:", {
+            'name': session['name'],
+            'job_title': session['job_title'],
+            'experience': session['experience'],
+            'education': session['education'],
+            'skills': session['skills'],
+            'profile': session['profile'],
+            'contact': session['contact'],
+            'activities': session['activities'],
+            'hobbies': session['hobbies']
+        })
+
         # Handle the profile picture upload
-        photo_filename = None
         if 'photo' in request.files:
             photo = request.files['photo']
             if photo and photo.filename != '':
-                # Save the uploaded photo to the 'uploads' folder
                 photo_filename = f"{session['name'].replace(' ', '_')}_{datetime.now().strftime('%Y%m%d%H%M%S')}.jpg"
                 photo_path = os.path.join(app.config['UPLOAD_FOLDER'], photo_filename)
                 photo.save(photo_path)
                 session['photo'] = photo_filename
+                print(f"Photo saved to: {photo_path}")
 
-        # Create the resume dictionary with all sections
+        # Create the resume dictionary with defaults
         resume = {
             'template': session.get('template'),
-            'name': session.get('name'),
-            'job_title': session.get('job_title'),
-            'experience': session.get('experience'),
-            'education': session.get('education'),
-            'skills': session.get('skills'),
-            'profile': session.get('profile'),
-            'contact': session.get('contact'),
-            'activities': session.get('activities'),
-            'hobbies': session.get('hobbies'),
-            'photo': session.get('photo')  # Pass the photo filename to the template
+            'name': session.get('name', 'Your Name'),
+            'job_title': session.get('job_title', 'Professional'),
+            'experience': session.get('experience', ['Experience not specified']),
+            'education': session.get('education', 'Education not specified'),
+            'skills': session.get('skills', 'Skills not specified'),
+            'profile': session.get('profile', ''),
+            'contact': session.get('contact', ['Contact information not provided']),
+            'activities': session.get('activities', []),
+            'hobbies': session.get('hobbies', []),
+            'photo': session.get('photo')
         }
 
-        # Load the appropriate HTML template based on the selected template
-        html_template = f"{session['template']}_template.html"
+        # Debug the resume data being passed to template
+        print("Resume data being passed to template:", resume)
 
-        # Render the HTML with the resume data
+        # Load the appropriate HTML template
+        html_template = f"{session['template']}_template.html"
         html_resume = render_template(html_template, resume=resume)
 
-        # Generate the filename for the PDF
+        # Debug: Save the generated HTML to inspect it
+        debug_html_path = os.path.join('resumes', 'debug_resume.html')
+        with open(debug_html_path, 'w') as f:
+            f.write(html_resume)
+        print(f"Debug HTML saved to: {debug_html_path}")
+
+        # Generate PDF
         filename = f"resume_{session['name'].replace(' ', '_')}_{datetime.now().strftime('%Y%m%d%H%M%S')}.pdf"
         pdf_path = os.path.join('resumes', filename)
-
-        # Convert HTML to PDF using WeasyPrint
+        
+        print(f"Attempting to generate PDF at: {pdf_path}")
         weasyprint.HTML(string=html_resume).write_pdf(pdf_path)
+        print("PDF generation successful!")
 
-        # Return the generated PDF as a download
         return send_file(pdf_path, as_attachment=True)
 
     except Exception as e:
-        print("Error:", e)
-        return render_template("index.html", error="An error occurred while generating the resume.")
+        print(f"Error generating resume: {str(e)}", exc_info=True)
+        return render_template("index.html", error=f"Failed to generate resume: {str(e)}")
+
 
 @app.route('/clear_session')
 def clear_session():
