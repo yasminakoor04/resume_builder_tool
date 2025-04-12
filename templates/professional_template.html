@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Professional Resume</title>
+    <style>
+        body {
+            font-family: 'Helvetica', sans-serif;
+            margin: 0;
+            padding: 40px;
+            color: #333;
+            background-color: #f5f5f5;
+        }
+        h1, h2 {
+            text-align: center;
+        }
+        .section {
+            margin-bottom: 30px;
+        }
+        ul {
+            padding-left: 20px;
+        }
+        .profile-picture {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .profile-picture img {
+            max-width: 150px;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body>
+    <h1>{{ resume.name }}</h1>
+    <h2>{{ resume.job_title }}</h2>
+
+    {% if resume.photo %}
+    <div class="profile-picture">
+        <img src="{{ url_for('static', filename='uploads/' + resume.photo) }}" alt="Profile Picture">
+    </div>
+    {% endif %}
+
+    {% if resume.profile %}
+    <div class="section">
+        <h3>Profile</h3>
+        <p>{{ resume.profile }}</p>
+    </div>
+    {% endif %}
+
+    {% if resume.contact %}
+    <div class="section">
+        <h3>Contact Information</h3>
+        <ul>
+            {% for item in resume.contact %}
+                <li>{{ item }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    {% if resume.experience %}
+    <div class="section">
+        <h3>Experience</h3>
+        <ul>
+            {% for item in resume.experience %}
+                <li>{{ item }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    {% if resume.education %}
+    <div class="section">
+        <h3>Education</h3>
+        <p>{{ resume.education }}</p>
+    </div>
+    {% endif %}
+
+    {% if resume.skills %}
+    <div class="section">
+        <h3>Skills</h3>
+        <ul>
+            {% for skill in resume.skills.split(',') %}
+                <li>{{ skill.strip() }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    {% if resume.activities %}
+    <div class="section">
+        <h3>Activities</h3>
+        <ul>
+            {% for item in resume.activities %}
+                <li>{{ item }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    {% if resume.hobbies %}
+    <div class="section">
+        <h3>Hobbies</h3>
+        <ul>
+            {% for item in resume.hobbies %}
+                <li>{{ item }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+</body>
+</html>
