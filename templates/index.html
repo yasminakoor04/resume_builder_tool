@@ -35,34 +35,26 @@
             </div>
 
             <div class="section" id="contact-section">
-                <label for="contact">Contact Info (add multiple):</label>
+                <label for="contact">Contact Info:</label>
                 <input type="text" name="contact" value="{{ session['contact'][0] if session['contact'] else '' }}">
-                <input type="text" name="contact" value="{{ session['contact'][1] if session['contact'] else '' }}">
-                <input type="text" name="contact" value="{{ session['contact'][2] if session['contact'] else '' }}">
                 <button type="button" class="add-btn" onclick="addField('contact')">Add Contact</button>
             </div>
 
             <div class="section" id="experience-section">
-                <label for="experience">Experience (add multiple):</label>
+                <label for="experience">Experience:</label>
                 <input type="text" name="experience" value="{{ session['experience'][0] if session['experience'] else '' }}">
-                <input type="text" name="experience" value="{{ session['experience'][1] if session['experience'] else '' }}">
-                <input type="text" name="experience" value="{{ session['experience'][2] if session['experience'] else '' }}">
                 <button type="button" class="add-btn" onclick="addField('experience')">Add Experience</button>
             </div>
 
             <div class="section" id="activities-section">
-                <label for="activities">Activities (add multiple):</label>
+                <label for="activities">Activities:</label>
                 <input type="text" name="activities" value="{{ session['activities'][0] if session['activities'] else '' }}">
-                <input type="text" name="activities" value="{{ session['activities'][1] if session['activities'] else '' }}">
-                <input type="text" name="activities" value="{{ session['activities'][2] if session['activities'] else '' }}">
                 <button type="button" class="add-btn" onclick="addField('activities')">Add Activity</button>
             </div>
 
             <div class="section" id="hobbies-section">
-                <label for="hobbies">Hobbies (add multiple):</label>
+                <label for="hobbies">Hobbies:</label>
                 <input type="text" name="hobbies" value="{{ session['hobbies'][0] if session['hobbies'] else '' }}">
-                <input type="text" name="hobbies" value="{{ session['hobbies'][1] if session['hobbies'] else '' }}">
-                <input type="text" name="hobbies" value="{{ session['hobbies'][2] if session['hobbies'] else '' }}">
                 <button type="button" class="add-btn" onclick="addField('hobbies')">Add Hobby</button>
             </div>
 
@@ -79,10 +71,32 @@
         function addField(section) {
             let sectionElement = document.getElementById(`${section}-section`);
             let inputFields = sectionElement.querySelectorAll(`input[name='${section}']`);
+            
+            // Create new input field for the section
             let newField = document.createElement("input");
             newField.setAttribute("type", "text");
             newField.setAttribute("name", section);
             sectionElement.insertBefore(newField, sectionElement.querySelector(".add-btn"));
+
+            // Create the delete button
+            let deleteButton = document.createElement("button");
+            deleteButton.setAttribute("type", "button");
+            deleteButton.classList.add("delete-btn");
+            deleteButton.textContent = `Delete ${section.charAt(0).toUpperCase() + section.slice(1)}`;
+            deleteButton.onclick = function () { deleteField(section, deleteButton) };
+            sectionElement.appendChild(deleteButton);
+        }
+
+        function deleteField(section, button) {
+            let sectionElement = document.getElementById(`${section}-section`);
+            let inputFields = sectionElement.querySelectorAll(`input[name='${section}']`);
+            
+            if (inputFields.length > 1) {
+                // Remove the last input field
+                sectionElement.removeChild(inputFields[inputFields.length - 1]);
+                // Remove the delete button
+                sectionElement.removeChild(button);
+            }
         }
     </script>
 </body>

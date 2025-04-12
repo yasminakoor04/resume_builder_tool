@@ -74,7 +74,7 @@ button:hover {
 /* Add/Delete Button styling */
 .add-btn,
 .delete-btn {
-    background-color: #4CAF50; /* Green */
+    background-color: #b7748b;
     color: white;
     font-size: 1rem;
     padding: 8px 16px;
@@ -87,13 +87,13 @@ button:hover {
 
 .add-btn:hover,
 .delete-btn:hover {
-    background-color: #45a049;
+    background-color: #f4aecb;
 }
 
 .delete-btn {
-    background-color: #f44336; /* Red */
+    background-color: #c43276fb; 
 }
 
 .delete-btn:hover {
-    background-color: #da190b;
+    background-color: #f17294;
 }

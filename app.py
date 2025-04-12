@@ -80,7 +80,7 @@ def generate_resume():
 
         # Generate the filename for the PDF
         filename = f"resume_{session['name'].replace(' ', '_')}_{datetime.now().strftime('%Y%m%d%H%M%S')}.pdf"
-        pdf_path = os.path.join('static', filename)
+        pdf_path = os.path.join('resumes', filename)
 
         # Convert HTML to PDF using WeasyPrint
         weasyprint.HTML(string=html_resume).write_pdf(pdf_path)
