@@ -1,81 +1,89 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Resume Builder</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <h1>Resume Builder</h1>
-    {% if error %}
-        <p style="color: red;">{{ error }}</p>
-    {% endif %}
-    <form action="/generate_resume" method="POST" enctype="multipart/form-data">
-        
-        <div class="section">
-            <label for="template">Choose a Template:</label>
-            <select name="template" required>
-                <option value="minimalist" {% if session['template'] == 'minimalist' %}selected{% endif %}>Minimalist</option>
-                <option value="professional" {% if session['template'] == 'professional' %}selected{% endif %}>Professional</option>
-                <option value="creative" {% if session['template'] == 'creative' %}selected{% endif %}>Creative</option>
-            </select>
-        </div>
+    <div class="container">
+        <h1>Resume Builder</h1>
+        {% if error %}
+            <p style="color: red;">{{ error }}</p>
+        {% endif %}
+        <form action="/generate_resume" method="POST" enctype="multipart/form-data">
+            
+            <div class="section">
+                <label for="template">Choose a Template:</label>
+                <select name="template" required>
+                    <option value="minimalist" {% if session['template'] == 'minimalist' %}selected{% endif %}>Minimalist</option>
+                    <option value="professional" {% if session['template'] == 'professional' %}selected{% endif %}>Professional</option>
+                    <option value="creative" {% if session['template'] == 'creative' %}selected{% endif %}>Creative</option>
+                </select>
+            </div>
 
-        <div class="section">
-            <label for="name">Full Name:</label>
-            <input type="text" name="name" value="{{ session['name'] }}" required>
+            <div class="section">
+                <label for="name">Full Name:</label>
+                <input type="text" name="name" value="{{ session['name'] }}" required>
 
-            <label for="job_title">Job Title:</label>
-            <input type="text" name="job_title" value="{{ session['job_title'] }}" required>
+                <label for="job_title">Job Title:</label>
+                <input type="text" name="job_title" value="{{ session['job_title'] }}" required>
 
-            <label for="profile">Profile Summary:</label>
-            <textarea name="profile" rows="4">{{ session['profile'] }}</textarea>
-        </div>
+                <label for="profile">Profile Summary:</label>
+                <textarea name="profile" rows="4">{{ session['profile'] }}</textarea>
+            </div>
 
-        <div class="section">
-            <label for="contact">Contact Info (add multiple):</label>
-            <input type="text" name="contact" value="{{ session['contact'][0] if session['contact'] else '' }}">
-            <input type="text" name="contact" value="{{ session['contact'][1] if session['contact'] else '' }}">
-            <input type="text" name="contact" value="{{ session['contact'][2] if session['contact'] else '' }}">
-        </div>
+            <div class="section" id="contact-section">
+                <label for="contact">Contact Info (add multiple):</label>
+                <input type="text" name="contact" value="{{ session['contact'][0] if session['contact'] else '' }}">
+                <input type="text" name="contact" value="{{ session['contact'][1] if session['contact'] else '' }}">
+                <input type="text" name="contact" value="{{ session['contact'][2] if session['contact'] else '' }}">
+                <button type="button" class="add-btn" onclick="addField('contact')">Add Contact</button>
+            </div>
 
-        <div class="section">
-            <label for="experience">Experience (add multiple):</label>
-            <input type="text" name="experience" value="{{ session['experience'][0] if session['experience'] else '' }}">
-            <input type="text" name="experience" value="{{ session['experience'][1] if session['experience'] else '' }}">
-            <input type="text" name="experience" value="{{ session['experience'][2] if session['experience'] else '' }}">
-        </div>
+            <div class="section" id="experience-section">
+                <label for="experience">Experience (add multiple):</label>
+                <input type="text" name="experience" value="{{ session['experience'][0] if session['experience'] else '' }}">
+                <input type="text" name="experience" value="{{ session['experience'][1] if session['experience'] else '' }}">
+                <input type="text" name="experience" value="{{ session['experience'][2] if session['experience'] else '' }}">
+                <button type="button" class="add-btn" onclick="addField('experience')">Add Experience</button>
+            </div>
 
-        <div class="section">
-            <label for="education">Education:</label>
-            <textarea name="education" rows="2">{{ session['education'] }}</textarea>
-        </div>
+            <div class="section" id="activities-section">
+                <label for="activities">Activities (add multiple):</label>
+                <input type="text" name="activities" value="{{ session['activities'][0] if session['activities'] else '' }}">
+                <input type="text" name="activities" value="{{ session['activities'][1] if session['activities'] else '' }}">
+                <input type="text" name="activities" value="{{ session['activities'][2] if session['activities'] else '' }}">
+                <button type="button" class="add-btn" onclick="addField('activities')">Add Activity</button>
+            </div>
 
-        <div class="section">
-            <label for="skills">Skills (comma separated):</label>
-            <input type="text" name="skills" value="{{ session['skills'] }}">
-        </div>
+            <div class="section" id="hobbies-section">
+                <label for="hobbies">Hobbies (add multiple):</label>
+                <input type="text" name="hobbies" value="{{ session['hobbies'][0] if session['hobbies'] else '' }}">
+                <input type="text" name="hobbies" value="{{ session['hobbies'][1] if session['hobbies'] else '' }}">
+                <input type="text" name="hobbies" value="{{ session['hobbies'][2] if session['hobbies'] else '' }}">
+                <button type="button" class="add-btn" onclick="addField('hobbies')">Add Hobby</button>
+            </div>
 
-        <div class="section">
-            <label for="activities">Activities (add multiple):</label>
-            <input type="text" name="activities" value="{{ session['activities'][0] if session['activities'] else '' }}">
-            <input type="text" name="activities" value="{{ session['activities'][1] if session['activities'] else '' }}">
-            <input type="text" name="activities" value="{{ session['activities'][2] if session['activities'] else '' }}">
-        </div>
+            <div class="section">
+                <label for="photo">Upload Profile Picture:</label>
+                <input type="file" name="photo" accept="image/*">
+            </div>
 
-        <div class="section">
-            <label for="hobbies">Hobbies (add multiple):</label>
-            <input type="text" name="hobbies" value="{{ session['hobbies'][0] if session['hobbies'] else '' }}">
-            <input type="text" name="hobbies" value="{{ session['hobbies'][1] if session['hobbies'] else '' }}">
-            <input type="text" name="hobbies" value="{{ session['hobbies'][2] if session['hobbies'] else '' }}">
-        </div>
+            <button type="submit">Generate Resume</button>
+        </form>
+    </div>
 
-        <div class="section">
-            <label for="photo">Upload Profile Picture:</label>
-            <input type="file" name="photo" accept="image/*">
-        </div>
-
-        <button type="submit">Generate Resume</button>
-    </form>
+    <script>
+        function addField(section) {
+            let sectionElement = document.getElementById(`${section}-section`);
+            let inputFields = sectionElement.querySelectorAll(`input[name='${section}']`);
+            let newField = document.createElement("input");
+            newField.setAttribute("type", "text");
+            newField.setAttribute("name", section);
+            sectionElement.insertBefore(newField, sectionElement.querySelector(".add-btn"));
+        }
+    </script>
 </body>
 </html>
