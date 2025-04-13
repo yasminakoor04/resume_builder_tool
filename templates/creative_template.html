@@ -10,36 +10,74 @@
             color: #fff;
             background-color: #2C3E50;
         }
+    
         h1, h2 {
             text-align: center;
             color: #ecf0f1;
         }
+    
         .section {
             margin-bottom: 30px;
         }
+    
         ul {
             padding-left: 20px;
         }
+    
         .profile-picture {
             text-align: center;
-            margin-bottom: 20px;
+            margin: 0 auto 20px;
         }
+    
         .profile-picture img {
-            max-width: 150px;
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            padding: 0;
+            background-color: #34495e;
+            border: 3px solid #ecf0f1;
+            box-sizing: border-box;
+        }
+
+        /* Shape styles */
+        .photo-shape-circle img {
             border-radius: 50%;
         }
-    </style>
+
+        .photo-shape-square img {
+            border-radius: 0;
+        }
+
+        .photo-shape-rounded img {
+            border-radius: 15%;
+        }
+
+        .photo-shape-oval img {
+            width: 90px;
+            height: 120px;
+            border-radius: 50% / 40%;
+        }
+
+        .photo-shape-rectangle img {
+            width: 120px;
+            height: 80px;
+            border-radius: 0;
+        }
+
+        .hidden {
+            display: none;
+        }
+</style>
 </head>
 <body>
-    <h1>{{ resume.name }}</h1>
-    <h2>{{ resume.job_title }}</h2>
-
     {% if resume.photo_path %}
-    <div class="profile-picture">
-        <!-- For PDF, use absolute path -->
+    <div class="profile-picture photo-shape-{{ resume.photo_shape }}">
         <img src="http://localhost:5000/{{ resume.photo_path }}" alt="Profile Picture">
     </div>
     {% endif %}
+
+    <h1>{{ resume.name }}</h1>
+    <h2>{{ resume.job_title }}</h2>
 
     {% if resume.profile %}
     <div class="section">

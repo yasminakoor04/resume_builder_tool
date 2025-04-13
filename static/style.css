@@ -97,3 +97,40 @@ button:hover {
 .delete-btn:hover {
     background-color: #f17294;
 }
+
+.hidden {
+    display: none;
+}
+
+.visible {
+    display: block;
+    margin-top: 10px;
+}
+
+/* Profile picture shape styles */
+.profile-picture.circle img {
+    border-radius: 50%;
+}
+
+.profile-picture.square img {
+    border-radius: 0;
+}
+
+.profile-picture.oval img {
+    border-radius: 50% / 30%;
+}
+
+.profile-picture.rounded img {
+    border-radius: 15px;
+}
+
+.profile-picture.rectangle img {
+    width: 110px;
+    height: 70px;
+    border-radius: 0;
+    border: 1px solid #ccc;
+}
+
+.profile-picture.hidden {
+    display: none !important;
+}

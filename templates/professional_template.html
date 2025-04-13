@@ -10,36 +10,72 @@
             padding: 40px;
             color: #333;
             background-color: #f5f5f5;
+            position: relative;
         }
+
         h1, h2 {
             text-align: center;
         }
+
         .section {
             margin-bottom: 30px;
         }
+
         ul {
             padding-left: 20px;
         }
+
         .profile-picture {
+            position: absolute;
+            top: 40px;
+            right: 40px;
             text-align: center;
-            margin-bottom: 20px;
         }
+
         .profile-picture img {
-            max-width: 150px;
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+        }
+
+        /* Shape styles */
+        .photo-shape-circle img {
             border-radius: 50%;
+        }
+
+        .photo-shape-square img {
+            border-radius: 0;
+        }
+
+        .photo-shape-rounded img {
+            border-radius: 15%;
+        }
+
+        .photo-shape-oval img {
+            border-radius: 50% / 30%;
+        }
+
+        .photo-shape-rectangle img {
+            width: 110px;
+            height: 70px;
+            border-radius: 0;
+            border: 1px solid #ccc;
+        }
+
+        .hidden {
+            display: none;
         }
     </style>
 </head>
 <body>
-    <h1>{{ resume.name }}</h1>
-    <h2>{{ resume.job_title }}</h2>
-
     {% if resume.photo_path %}
-    <div class="profile-picture">
-        <!-- For PDF, use absolute path -->
+    <div class="profile-picture photo-shape-{{ resume.photo_shape }}">
         <img src="http://localhost:5000/{{ resume.photo_path }}" alt="Profile Picture">
     </div>
     {% endif %}
+
+    <h1>{{ resume.name }}</h1>
+    <h2>{{ resume.job_title }}</h2>
 
     {% if resume.profile %}
     <div class="section">

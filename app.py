@@ -3,7 +3,6 @@ import os
 import weasyprint
 from werkzeug.utils import secure_filename
 from datetime import datetime
-from pathlib import Path
 
 app = Flask(__name__, static_url_path='/static', static_folder='static')
 
@@ -22,6 +21,7 @@ def home():
     session.setdefault('contact', [])
     session.setdefault('experience', [])
     session.setdefault('hobbies', [])
+    session.setdefault('photo_shape', 'circle')  # default shape
     return render_template('index.html')
 
 @app.route('/generate_resume', methods=['POST'])
@@ -38,48 +38,49 @@ def generate_resume():
             'profile': request.form.get('profile', ''),
             'contact': [cont for cont in request.form.getlist('contact[]') if cont.strip()],
             'activities': [act for act in request.form.getlist('activities[]') if act.strip()],
-            'hobbies': [hobby for hobby in request.form.getlist('hobbies[]') if hobby.strip()]
+            'hobbies': [hobby for hobby in request.form.getlist('hobbies[]') if hobby.strip()],
+            'photo_shape': request.form.get('photo_shape', 'circle')  # Save selected photo shape
         })
 
         # Handle file upload
-        photo_path = None
-        if 'photo' in request.files:
-            photo = request.files['photo']
-            if photo and photo.filename and photo.filename != '':
-                # Generate secure filename
-                ext = os.path.splitext(photo.filename)[1].lower()
-                if ext not in ['.jpg', '.jpeg', '.png']:
-                    raise ValueError("Invalid image format. Only JPG/PNG allowed.")
-                
-                filename = secure_filename(
-                    f"{session['name'].replace(' ', '_')}_{datetime.now().strftime('%Y%m%d%H%M%S')}{ext}"
-                )
-                photo_path = os.path.abspath(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-                photo.save(photo_path)
-                session['photo'] = filename
-                print(f"Saved photo to: {photo_path}")
+        photo = request.files.get('photo')
+        photo_shape = request.form.get('photo_shape')
 
-        # Prepare resume data with relative path for WeasyPrint
+        # If a new photo was uploaded
+        if photo and photo.filename:
+            ext = os.path.splitext(photo.filename)[1].lower()
+            if ext not in ['.jpg', '.jpeg', '.png']:
+                raise ValueError("Invalid image format. Only JPG/PNG allowed.")
+            
+            filename = secure_filename(
+                f"{session['name'].replace(' ', '_')}_{datetime.now().strftime('%Y%m%d%H%M%S')}{ext}"
+            )
+            photo_path = os.path.abspath(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            photo.save(photo_path)
+            session['photo'] = filename
+            session['photo_shape'] = photo_shape or 'circle'
+        else:
+            # No photo uploaded this time, so remove any previous photo
+            session.pop('photo', None)
+            session.pop('photo_shape', None)
+
+        # Prepare resume data
         resume = {
-        **session,
-        'photo_path': f"static/uploads/{session['photo']}" if 'photo' in session else None,  # Use relative path for Flask
-        'photo_local_path': photo_path if photo_path else None,
-        'pdf': True  # Flag to indicate PDF generation context
-    }
+            **session,
+            'photo_path': f"static/uploads/{session['photo']}" if 'photo' in session else None,
+            'photo_shape': session.get('photo_shape', 'circle'),
+            'pdf': True
+        }
 
-        # Generate HTML
+        # Render HTML
         html_resume = render_template(f"{session['template']}_template.html", resume=resume)
 
         # Generate PDF
         pdf_filename = f"resume_{session['name'].replace(' ', '_')}_{datetime.now().strftime('%Y%m%d%H%M%S')}.pdf"
         pdf_path = os.path.join('resumes', pdf_filename)
-        
-        # Convert HTML to PDF with base_url to resolve local paths
-        weasyprint.HTML(
-        string=html_resume,
-        base_url='http://localhost:5000'  # Ensure absolute URLs are resolved correctly
-        ).write_pdf(pdf_path)
-        
+
+        weasyprint.HTML(string=html_resume, base_url='http://localhost:5000').write_pdf(pdf_path)
+
         print(f"PDF successfully generated at: {pdf_path}")
         return send_file(pdf_path, as_attachment=True)
 
@@ -91,6 +92,20 @@ def generate_resume():
 def clear_session():
     session.clear()
     return redirect(url_for('home'))
+
+@app.route('/preview')
+def preview():
+    if 'template' not in session:
+        return redirect(url_for('home'))
+
+    resume = {
+        **session,
+        'photo_path': f"static/uploads/{session['photo']}" if 'photo' in session else None,
+        'photo_shape': session.get('photo_shape', 'circle'),
+        'pdf': False
+    }
+
+    return render_template(f"{session['template']}_template.html", resume=resume)
 
 if __name__ == "__main__":
     app.run(debug=True, host="localhost", port=5000)

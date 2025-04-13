@@ -13,7 +13,7 @@
             <p style="color: red;">{{ error }}</p>
         {% endif %}
         <form action="/generate_resume" method="POST" enctype="multipart/form-data">
-            
+
             <div class="section">
                 <label for="template">Choose a Template:</label>
                 <select name="template" required>
@@ -62,7 +62,7 @@
                 <label for="education">Education:</label>
                 <input type="text" name="education" value="{{ session['education'] if session['education'] else '' }}" required>
             </div>
-            
+
             <div class="section">
                 <label for="skills">Skills (comma separated):</label>
                 <textarea name="skills" rows="2" required>{{ session['skills'] if session['skills'] else '' }}</textarea>
@@ -70,7 +70,18 @@
 
             <div class="section">
                 <label for="photo">Upload Profile Picture:</label>
-                <input type="file" name="photo" accept="image/*">
+                <input type="file" name="photo" accept="image/*" onchange="togglePhotoShape(true)">
+                <div id="shape-section" class="{% if session['photo'] %}visible{% else %}hidden{% endif %}">
+                    <label for="photo_shape">Choose Photo Shape:</label>
+                    <select name="photo_shape">
+                        <option value="circle" {% if session['photo_shape'] == 'circle' %}selected{% endif %}>Circle</option>
+                        <option value="square" {% if session['photo_shape'] == 'square' %}selected{% endif %}>Square</option>
+                        <option value="oval" {% if session['photo_shape'] == 'oval' %}selected{% endif %}>Oval</option>
+                        <option value="rounded" {% if session['photo_shape'] == 'rounded' %}selected{% endif %}>Rounded Corners</option>
+                        <option value="rectangle" {% if session['photo_shape'] == 'rectangle' %}selected{% endif %}>Rectangle</option>
+                        <option value="hidden" {% if session['photo_shape'] == 'hidden' %}selected{% endif %}>Do Not Show</option>
+                    </select>
+                </div>
             </div>
 
             <button type="submit">Generate Resume</button>
@@ -78,32 +89,34 @@
     </div>
 
     <script>
+        function togglePhotoShape(show = false) {
+            const shapeSection = document.getElementById("shape-section");
+            shapeSection.style.display = show ? "block" : "none";
+        }
+
         function addField(section) {
-            let sectionElement = document.getElementById(`${section}-section`);
-            
-            // Create new input field for the section
-            let newField = document.createElement("input");
+            const sectionElement = document.getElementById(`${section}-section`);
+
+            const newField = document.createElement("input");
             newField.setAttribute("type", "text");
-            newField.setAttribute("name", section + "[]");  // Ensure it's treated as an array
+            newField.setAttribute("name", section + "[]");
+
             sectionElement.insertBefore(newField, sectionElement.querySelector(".add-btn"));
 
-            // Create the delete button
-            let deleteButton = document.createElement("button");
+            const deleteButton = document.createElement("button");
             deleteButton.setAttribute("type", "button");
             deleteButton.classList.add("delete-btn");
             deleteButton.textContent = `Delete ${section.charAt(0).toUpperCase() + section.slice(1)}`;
-            deleteButton.onclick = function () { deleteField(section, deleteButton) };
+            deleteButton.onclick = () => deleteField(section, deleteButton);
             sectionElement.appendChild(deleteButton);
         }
 
         function deleteField(section, button) {
-            let sectionElement = document.getElementById(`${section}-section`);
-            let inputFields = sectionElement.querySelectorAll(`input[name='${section}[]']`);
-            
+            const sectionElement = document.getElementById(`${section}-section`);
+            const inputFields = sectionElement.querySelectorAll(`input[name='${section}[]']`);
+
             if (inputFields.length > 1) {
-                // Remove the last input field
                 sectionElement.removeChild(inputFields[inputFields.length - 1]);
-                // Remove the delete button
                 sectionElement.removeChild(button);
             }
         }
