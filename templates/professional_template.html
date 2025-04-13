@@ -34,10 +34,10 @@
     <h1>{{ resume.name }}</h1>
     <h2>{{ resume.job_title }}</h2>
 
-    {% if resume.photo %}
+    {% if resume.photo_path %}
     <div class="profile-picture">
-        <!-- Updated image source for WeasyPrint compatibility -->
-        <img src="file://{{ resume.photo_path|replace('\\', '/') }}" alt="Profile Picture">
+        <!-- For PDF, use absolute path -->
+        <img src="http://localhost:5000/{{ resume.photo_path }}" alt="Profile Picture">
     </div>
     {% endif %}
 
