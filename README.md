@@ -50,7 +50,7 @@ A customizable resume builder web application that allows users to generate poli
 1. **Clone the repository**
 ```bash
 git clone https://github.com/yasminakoor04/resume_builder_tool.git
-cd resume_builder
+cd resume_builder_tool
 ```
 
 2. **Install the dependencies**
