@@ -72,3 +72,9 @@ Go to: [http://localhost:5000](http://localhost:5000)
 
 This project was built to make professional resume creation easy, flexible, and visually appealing. It’s designed for students and job seekers who want a personalized, ready-to-print CV — no design skills needed.
 
+---
+
+## 📜 License
+
+This project is licensed under the MIT License – see the [LICENSE](LICENSE) file for details.
+
